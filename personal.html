@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <base target="_self">
+  <meta name="description" content="个人页">
+  <title>ZL灵光 - 个人</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body id="top" class="sub-page" data-page="personal">
+  <header class="top-nav">
+    <nav class="top-nav-menu">
+      <a href="./index.html">首页</a>
+      <a href="./notes.html">随记</a>
+      <a href="./gallery.html">图库</a>
+      <a href="./projects.html">项目</a>
+      <a class="is-active" href="./personal.html">个人</a>
+      <a href="./message.html">留言</a>
+    </nav>
+  </header>
+
+  <main class="hero-screen content-screen">
+    <section class="content-wrap personal-manager">
+      <div class="manager-nav">
+        <a class="manager-link" href="./notes.html">前往随记</a>
+        <a class="manager-link" href="./gallery.html">前往图库</a>
+        <a class="manager-link" href="./projects.html">前往项目</a>
+      </div>
+
+      <div class="manager-grid">
+        <article class="manager-card">
+          <h2>随记</h2>
+          <label class="field-label" for="noteInput">内容</label>
+          <textarea id="noteInput" class="field-input field-textarea" placeholder="输入随记内容"></textarea>
+          <button id="addNoteBtn" class="action-btn" type="button">发布到随记</button>
+        </article>
+
+        <article class="manager-card">
+          <h2>图库</h2>
+          <label class="field-label" for="galleryAlbumTitle">相册名称</label>
+          <input id="galleryAlbumTitle" class="field-input" type="text" placeholder="如：家庭纪实 2026">
+          <label class="field-label" for="galleryAlbumSelect">追加到已有相册</label>
+          <select id="galleryAlbumSelect" class="field-input">
+            <option value="">请选择已有相册</option>
+          </select>
+          <label class="field-label" for="galleryFile">上传图片</label>
+          <input id="galleryFile" class="field-input" type="file" accept="image/*" multiple>
+          <label class="field-label" for="galleryCaption">图片说明（可选）</label>
+          <input id="galleryCaption" class="field-input" type="text" placeholder="如：金色夜景人像">
+          <button id="addGalleryBtn" class="action-btn" type="button">创建相册并上传</button>
+          <button id="appendGalleryBtn" class="action-btn action-btn-secondary" type="button">继续添加照片</button>
+        </article>
+
+        <article class="manager-card">
+          <h2>项目</h2>
+          <label class="field-label" for="projectTitle">项目标题</label>
+          <input id="projectTitle" class="field-input" type="text" placeholder="输入项目名称">
+          <label class="field-label" for="projectDesc">项目介绍</label>
+          <textarea id="projectDesc" class="field-input field-textarea" placeholder="输入项目描述"></textarea>
+          <button id="addProjectBtn" class="action-btn" type="button">发布到项目</button>
+        </article>
+
+        <article class="manager-card">
+          <h2>短视频账号</h2>
+          <p class="field-hint">添加的账号将显示在首页第三屏，最多 8 个</p>
+          <label class="field-label" for="shortVideoPlatform">平台</label>
+          <input id="shortVideoPlatform" class="field-input" type="text" placeholder="如：抖音、快手、B站">
+          <label class="field-label" for="shortVideoAccount">账号名称</label>
+          <input id="shortVideoAccount" class="field-input" type="text" placeholder="输入账号名称">
+          <label class="field-label" for="shortVideoUrl">主页链接</label>
+          <input id="shortVideoUrl" class="field-input" type="url" placeholder="https://...">
+          <button id="addShortVideoBtn" class="action-btn" type="button">添加到首页</button>
+        </article>
+      </div>
+    </section>
+  </main>
+  <script src="./auth-gate.js"></script>
+  <script src="./content-sync.js"></script>
+  <script src="./nav-scroll.js"></script>
+  <script src="./site-search.js?v=20260311c"></script>
+</body>
+</html>

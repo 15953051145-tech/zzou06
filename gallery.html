@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <base target="_self">
+  <meta name="description" content="图库页">
+  <title>ZL灵光 - 图库</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body id="top" class="sub-page" data-page="gallery">
+  <header class="top-nav">
+    <nav class="top-nav-menu">
+      <a href="./index.html">首页</a>
+      <a href="./notes.html">随记</a>
+      <a class="is-active" href="./gallery.html">图库</a>
+      <a href="./projects.html">项目</a>
+      <a href="./personal.html">个人</a>
+      <a href="./message.html">留言</a>
+    </nav>
+  </header>
+
+  <main class="hero-screen content-screen">
+    <section class="content-wrap gallery-wrap">
+      <div id="galleryGrid" class="gallery-grid"></div>
+      <div id="galleryLoadMoreWrap" class="gallery-load-more-wrap">
+        <button id="loadMoreGalleryBtn" class="action-btn gallery-load-more-btn" type="button">加载更多</button>
+      </div>
+    </section>
+  </main>
+  <script src="./auth-gate.js"></script>
+  <script src="./content-sync.js"></script>
+  <script src="./nav-scroll.js"></script>
+  <script src="./site-search.js?v=20260311c"></script>
+</body>
+</html>

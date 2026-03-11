@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <base target="_self">
+  <title>ZL灵光</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body class="home-page">
+  <canvas id="bg-canvas" aria-hidden="true"></canvas>
+
+  <section class="hero-screen">
+    <div class="ui-layer">
+      <header class="top-nav fade-up delay-1">
+        <nav class="top-nav-menu">
+          <a href="./index.html">首页</a>
+          <a href="./notes.html">随记</a>
+          <a href="./gallery.html">图库</a>
+          <a href="./projects.html">项目</a>
+          <a href="./personal.html">个人</a>
+          <a href="./message.html">留言</a>
+        </nav>
+      </header>
+
+      <main class="hero-left">
+        <p class="kicker fade-up delay-2">ZL LIGHT</p>
+        <h1 class="title fade-up delay-3"><span>ZL</span><em>灵光</em></h1>
+        <p class="headline fade-up delay-4">慢下脚步</p>
+        <p class="headline fade-up delay-5">让心灵照亮前行的路</p>
+      </main>
+    </div>
+  </section>
+
+  <section class="blank-page" aria-label="blank page">
+    <aside class="message-panel">
+      <h2>留言</h2>
+      <div id="homeMessageList" class="message-panel-list"></div>
+    </aside>
+    <article class="note-card">
+      <h2>随记</h2>
+      <textarea placeholder="在这里记录你的想法..."></textarea>
+    </article>
+  </section>
+
+  <section class="home-page-extra" aria-label="更多内容">
+    <div class="home-page-extra-inner">
+      <h2 class="home-page-extra-title">更多</h2>
+      <p class="home-page-extra-desc">向下滚动探索更多内容</p>
+    </div>
+    <div id="homeShortVideoBoxes" class="home-shortvideo-grid"></div>
+  </section>
+
+  <script type="module" src="./script.js"></script>
+  <script src="./auth-gate.js"></script>
+  <script src="./content-sync.js"></script>
+  <script src="./nav-scroll.js"></script>
+  <script src="./site-search.js?v=20260311c"></script>
+</body>
+</html>

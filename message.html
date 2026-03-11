@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <base target="_self">
+  <meta name="description" content="留言页">
+  <title>ZL灵光 - 留言</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body id="top" class="sub-page" data-page="message">
+  <header class="top-nav">
+    <nav class="top-nav-menu">
+      <a href="./index.html">首页</a>
+      <a href="./notes.html">随记</a>
+      <a href="./gallery.html">图库</a>
+      <a href="./projects.html">项目</a>
+      <a href="./personal.html">个人</a>
+      <a class="is-active" href="./message.html">留言</a>
+    </nav>
+  </header>
+
+  <main class="hero-screen content-screen">
+    <section class="content-wrap message-wrap">
+      <article class="manager-card message-card">
+        <h2>留言窗口</h2>
+        <label class="field-label" for="messageName">昵称（可选）</label>
+        <input id="messageName" class="field-input" type="text" placeholder="输入你的昵称">
+        <label class="field-label" for="messageInput">留言内容</label>
+        <textarea id="messageInput" class="field-input field-textarea" placeholder="写下你想说的话..."></textarea>
+        <button id="addMessageBtn" class="action-btn" type="button">发布留言</button>
+      </article>
+      <div id="messageList" class="list-grid"></div>
+      <div id="messageListSentinel" class="load-more-sentinel" aria-hidden="true"></div>
+    </section>
+  </main>
+  <script src="./auth-gate.js"></script>
+  <script src="./content-sync.js"></script>
+  <script src="./nav-scroll.js"></script>
+  <script src="./site-search.js?v=20260311c"></script>
+</body>
+</html>
