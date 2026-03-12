@@ -54,6 +54,9 @@ function setupAutoLoad(sentinelId, loadMoreFn) {
 }
 
 function safeRead(key) {
+  if (window.ZLStorage && typeof window.ZLStorage.read === "function") {
+    return window.ZLStorage.read(key);
+  }
   try {
     const raw = localStorage.getItem(key);
     const parsed = raw ? JSON.parse(raw) : [];
@@ -63,7 +66,11 @@ function safeRead(key) {
   }
 }
 
-function safeWrite(key, data) {
+async function safeWrite(key, data) {
+  if (window.ZLStorage && typeof window.ZLStorage.write === "function") {
+    await window.ZLStorage.write(key, data);
+    return;
+  }
   localStorage.setItem(key, JSON.stringify(data));
 }
 
@@ -367,7 +374,7 @@ function initPersonalManager() {
   const addProjectBtn = document.getElementById("addProjectBtn");
 
   if (addNoteBtn && noteInput) {
-    addNoteBtn.addEventListener("click", () => {
+    addNoteBtn.addEventListener("click", async () => {
       const content = noteInput.value.trim();
       if (!content) {
         alert("请先输入随记内容");
@@ -381,7 +388,7 @@ function initPersonalManager() {
         content,
         createdAt: nowLabel(),
       });
-      safeWrite(STORAGE_KEYS.notes, list);
+      await safeWrite(STORAGE_KEYS.notes, list);
       noteInput.value = "";
       alert("已发布到随记页面");
     });
@@ -458,7 +465,7 @@ function initPersonalManager() {
           });
         }
 
-        safeWrite(STORAGE_KEYS.gallery, list);
+        await safeWrite(STORAGE_KEYS.gallery, list);
         galleryFile.value = "";
         if (galleryCaption) galleryCaption.value = "";
         if (galleryAlbumTitle && !appendMode) galleryAlbumTitle.value = "";
@@ -489,7 +496,7 @@ function initPersonalManager() {
   }
 
   if (addProjectBtn && projectTitle && projectDesc) {
-    addProjectBtn.addEventListener("click", () => {
+    addProjectBtn.addEventListener("click", async () => {
       const title = projectTitle.value.trim();
       const description = projectDesc.value.trim();
       if (!title || !description) {
@@ -504,7 +511,7 @@ function initPersonalManager() {
         description,
         createdAt: nowLabel(),
       });
-      safeWrite(STORAGE_KEYS.projects, list);
+      await safeWrite(STORAGE_KEYS.projects, list);
       projectTitle.value = "";
       projectDesc.value = "";
       alert("已发布到项目页面");
@@ -517,7 +524,7 @@ function initPersonalManager() {
   const addShortVideoBtn = document.getElementById("addShortVideoBtn");
 
   if (addShortVideoBtn && shortVideoUrl) {
-    addShortVideoBtn.addEventListener("click", () => {
+    addShortVideoBtn.addEventListener("click", async () => {
       const url = shortVideoUrl.value.trim();
       if (!url) {
         alert("请填写主页链接");
@@ -535,7 +542,7 @@ function initPersonalManager() {
         url,
         createdAt: nowLabel(),
       });
-      safeWrite(STORAGE_KEYS.shortVideoAccounts, list);
+      await safeWrite(STORAGE_KEYS.shortVideoAccounts, list);
       if (shortVideoPlatform) shortVideoPlatform.value = "";
       if (shortVideoAccount) shortVideoAccount.value = "";
       shortVideoUrl.value = "";
@@ -561,7 +568,7 @@ function initHomeNoteBinding() {
     textarea.dataset.lastSaved = latest.content || "";
   }
 
-  function publishLatestFromHome() {
+  async function publishLatestFromHome() {
     const content = textarea.value.trim();
     const lastSaved = textarea.dataset.lastSaved || "";
     if (!content || content === lastSaved) return;
@@ -573,7 +580,7 @@ function initHomeNoteBinding() {
       content,
       createdAt: nowLabel(),
     });
-    safeWrite(STORAGE_KEYS.notes, notes);
+    await safeWrite(STORAGE_KEYS.notes, notes);
     textarea.dataset.lastSaved = content;
   }
 
@@ -676,7 +683,7 @@ function initMessageBoard() {
   const btn = document.getElementById("addMessageBtn");
   if (!input || !btn) return;
 
-  btn.addEventListener("click", () => {
+  btn.addEventListener("click", async () => {
     const content = input.value.trim();
     const name = nameInput ? nameInput.value.trim() : "";
     if (!content) {
@@ -691,7 +698,7 @@ function initMessageBoard() {
       content,
       createdAt: nowLabel(),
     });
-    safeWrite(STORAGE_KEYS.messages, list);
+    await safeWrite(STORAGE_KEYS.messages, list);
     input.value = "";
     if (nameInput) nameInput.value = "";
     renderMessages();
@@ -700,12 +707,6 @@ function initMessageBoard() {
   renderMessages();
 }
 
-const page = document.body.getAttribute("data-page");
-if (page === "personal") initPersonalManager();
-if (page === "notes") renderNotes();
-if (page === "gallery") renderGallery();
-if (page === "projects") renderProjects();
-if (page === "message") initMessageBoard();
 function renderHomeShortVideoBoxes() {
   const host = document.getElementById("homeShortVideoBoxes");
   if (!host) return;
@@ -767,8 +768,23 @@ function renderHomeShortVideoBoxes() {
   }
 }
 
-if (document.body.classList.contains("home-page")) {
-  initHomeNoteBinding();
-  renderHomeMessages();
-  renderHomeShortVideoBoxes();
+async function initContentSync() {
+  if (window.ZLStorage && typeof window.ZLStorage.init === "function") {
+    await window.ZLStorage.init();
+  }
+  const page = document.body.getAttribute("data-page");
+  if (page === "personal") initPersonalManager();
+  if (page === "notes") renderNotes();
+  if (page === "gallery") renderGallery();
+  if (page === "projects") renderProjects();
+  if (page === "message") initMessageBoard();
+  if (document.body.classList.contains("home-page")) {
+    initHomeNoteBinding();
+    renderHomeMessages();
+    renderHomeShortVideoBoxes();
+  }
 }
+
+initContentSync().catch(function (err) {
+  console.error("Content sync init failed:", err);
+});
