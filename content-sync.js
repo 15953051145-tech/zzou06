@@ -358,6 +358,153 @@ function renderProjects() {
   setupAutoLoad("projectsListSentinel", loadMore);
 }
 
+function renderPersonalDataLists() {
+  if (!canEditSiteContent()) return;
+
+  const notesList = document.getElementById("personalNotesList");
+  const galleryList = document.getElementById("personalGalleryList");
+  const projectsList = document.getElementById("personalProjectsList");
+  const shortVideoList = document.getElementById("personalShortVideoList");
+
+  if (notesList) {
+    const notes = safeRead(STORAGE_KEYS.notes).slice().reverse();
+    notesList.innerHTML = "";
+    if (notes.length) {
+      const title = document.createElement("p");
+      title.className = "personal-list-title";
+      title.textContent = "已有随记";
+      notesList.appendChild(title);
+      notes.forEach((item) => {
+        const row = document.createElement("div");
+        row.className = "personal-data-row";
+        const preview = document.createElement("span");
+        preview.className = "personal-data-preview";
+        preview.textContent = (item.content || "").slice(0, 40) + (item.content && item.content.length > 40 ? "…" : "");
+        const delBtn = document.createElement("button");
+        delBtn.className = "action-btn action-btn-delete";
+        delBtn.type = "button";
+        delBtn.textContent = "删除";
+        delBtn.dataset.id = item.id;
+        delBtn.addEventListener("click", async () => {
+          if (!confirm("确定删除这条随记？")) return;
+          const list = safeRead(STORAGE_KEYS.notes).filter((n) => n.id !== item.id);
+          await safeWrite(STORAGE_KEYS.notes, list);
+          renderPersonalDataLists();
+        });
+        row.appendChild(preview);
+        row.appendChild(delBtn);
+        notesList.appendChild(row);
+      });
+    }
+  }
+
+  if (galleryList) {
+    const albums = normalizeGalleryAlbums(safeRead(STORAGE_KEYS.gallery)).slice().reverse();
+    galleryList.innerHTML = "";
+    if (albums.length) {
+      const title = document.createElement("p");
+      title.className = "personal-list-title";
+      title.textContent = "已有相册";
+      galleryList.appendChild(title);
+      albums.forEach((item) => {
+        const row = document.createElement("div");
+        row.className = "personal-data-row";
+        const preview = document.createElement("span");
+        preview.className = "personal-data-preview";
+        preview.textContent = `${item.title || "未命名"} (${(item.images || []).length} 张)`;
+        const delBtn = document.createElement("button");
+        delBtn.className = "action-btn action-btn-delete";
+        delBtn.type = "button";
+        delBtn.textContent = "删除";
+        delBtn.dataset.id = item.id;
+        delBtn.addEventListener("click", async () => {
+          if (!confirm(`确定删除相册「${item.title || "未命名"}」？`)) return;
+          const list = normalizeGalleryAlbums(safeRead(STORAGE_KEYS.gallery)).filter((a) => a.id !== item.id);
+          await safeWrite(STORAGE_KEYS.gallery, list);
+          renderPersonalDataLists();
+          const galleryAlbumSelect = document.getElementById("galleryAlbumSelect");
+          if (galleryAlbumSelect) {
+            galleryAlbumSelect.innerHTML = '<option value="">请选择已有相册</option>';
+            list.forEach((album) => {
+              const option = document.createElement("option");
+              option.value = album.id;
+              option.textContent = `${album.title || "未命名相册"} (${(album.images || []).length})`;
+              galleryAlbumSelect.appendChild(option);
+            });
+          }
+        });
+        row.appendChild(preview);
+        row.appendChild(delBtn);
+        galleryList.appendChild(row);
+      });
+    }
+  }
+
+  if (projectsList) {
+    const projects = safeRead(STORAGE_KEYS.projects).slice().reverse();
+    projectsList.innerHTML = "";
+    if (projects.length) {
+      const title = document.createElement("p");
+      title.className = "personal-list-title";
+      title.textContent = "已有项目";
+      projectsList.appendChild(title);
+      projects.forEach((item) => {
+        const row = document.createElement("div");
+        row.className = "personal-data-row";
+        const preview = document.createElement("span");
+        preview.className = "personal-data-preview";
+        preview.textContent = item.title || "未命名项目";
+        const delBtn = document.createElement("button");
+        delBtn.className = "action-btn action-btn-delete";
+        delBtn.type = "button";
+        delBtn.textContent = "删除";
+        delBtn.dataset.id = item.id;
+        delBtn.addEventListener("click", async () => {
+          if (!confirm(`确定删除项目「${item.title || "未命名"}」？`)) return;
+          const list = safeRead(STORAGE_KEYS.projects).filter((p) => p.id !== item.id);
+          await safeWrite(STORAGE_KEYS.projects, list);
+          renderPersonalDataLists();
+        });
+        row.appendChild(preview);
+        row.appendChild(delBtn);
+        projectsList.appendChild(row);
+      });
+    }
+  }
+
+  if (shortVideoList) {
+    const accounts = safeRead(STORAGE_KEYS.shortVideoAccounts).slice().reverse();
+    shortVideoList.innerHTML = "";
+    if (accounts.length) {
+      const title = document.createElement("p");
+      title.className = "personal-list-title";
+      title.textContent = "已有短视频账号";
+      shortVideoList.appendChild(title);
+      accounts.forEach((item) => {
+        const row = document.createElement("div");
+        row.className = "personal-data-row";
+        const preview = document.createElement("span");
+        preview.className = "personal-data-preview";
+        preview.textContent = `${item.platform || ""} - ${item.accountName || "未命名"}`;
+        const delBtn = document.createElement("button");
+        delBtn.className = "action-btn action-btn-delete";
+        delBtn.type = "button";
+        delBtn.textContent = "删除";
+        delBtn.dataset.id = item.id;
+        delBtn.addEventListener("click", async () => {
+          if (!confirm(`确定删除账号「${item.accountName || "未命名"}」？`)) return;
+          const list = safeRead(STORAGE_KEYS.shortVideoAccounts).filter((a) => a.id !== item.id);
+          await safeWrite(STORAGE_KEYS.shortVideoAccounts, list);
+          renderPersonalDataLists();
+        });
+        row.appendChild(preview);
+        row.appendChild(delBtn);
+        shortVideoList.appendChild(row);
+      });
+    }
+  }
+}
+
 function initPersonalManager() {
   if (!canEditSiteContent()) return;
 
@@ -390,6 +537,7 @@ function initPersonalManager() {
       });
       await safeWrite(STORAGE_KEYS.notes, list);
       noteInput.value = "";
+      renderPersonalDataLists();
       alert("已发布到随记页面");
     });
   }
@@ -470,6 +618,7 @@ function initPersonalManager() {
         if (galleryCaption) galleryCaption.value = "";
         if (galleryAlbumTitle && !appendMode) galleryAlbumTitle.value = "";
         refreshAlbumSelect();
+        renderPersonalDataLists();
         alert(
           appendMode
             ? `已向现有图库添加 ${images.length} 张图片`
@@ -514,6 +663,7 @@ function initPersonalManager() {
       await safeWrite(STORAGE_KEYS.projects, list);
       projectTitle.value = "";
       projectDesc.value = "";
+      renderPersonalDataLists();
       alert("已发布到项目页面");
     });
   }
@@ -546,9 +696,12 @@ function initPersonalManager() {
       if (shortVideoPlatform) shortVideoPlatform.value = "";
       if (shortVideoAccount) shortVideoAccount.value = "";
       shortVideoUrl.value = "";
+      renderPersonalDataLists();
       alert("已添加到首页");
     });
   }
+
+  renderPersonalDataLists();
 }
 
 function initHomeNoteBinding() {
@@ -768,6 +921,62 @@ function renderHomeShortVideoBoxes() {
   }
 }
 
+function renderHomeLatestGallery() {
+  const host = document.getElementById("homeLatestGallery");
+  if (!host) return;
+
+  const albums = normalizeGalleryAlbums(safeRead(STORAGE_KEYS.gallery));
+  const photos = [];
+
+  albums.forEach((album, albumIdx) => {
+    (album.images || []).forEach((photo, photoIdx) => {
+      photos.push({
+        src: photo.src || "",
+        caption: photo.caption || "",
+        createdAt: photo.createdAt || "",
+        albumTitle: album.title || "相册",
+        orderKey: `${albumIdx}-${photoIdx}`,
+      });
+    });
+  });
+
+  if (!photos.length) {
+    host.innerHTML = "";
+    host.appendChild(createEmptyState("暂无图库图片"));
+    return;
+  }
+
+  const toTime = (val) => {
+    const t = new Date(val).getTime();
+    return Number.isFinite(t) ? t : 0;
+  };
+
+  photos.sort((a, b) => {
+    const diff = toTime(b.createdAt) - toTime(a.createdAt);
+    if (diff !== 0) return diff;
+    return b.orderKey.localeCompare(a.orderKey);
+  });
+
+  host.innerHTML = "";
+  photos.slice(0, 3).forEach((item) => {
+    const card = document.createElement("article");
+    card.className = "home-latest-gallery-card";
+
+    const image = document.createElement("img");
+    image.src = item.src;
+    image.alt = item.caption || item.albumTitle || "图库最新图片";
+    image.loading = "lazy";
+    card.appendChild(image);
+
+    const caption = document.createElement("div");
+    caption.className = "home-latest-gallery-caption";
+    caption.textContent = item.caption || item.albumTitle || "最新图片";
+    card.appendChild(caption);
+
+    host.appendChild(card);
+  });
+}
+
 async function initContentSync() {
   if (window.ZLStorage && typeof window.ZLStorage.init === "function") {
     await window.ZLStorage.init();
@@ -781,6 +990,7 @@ async function initContentSync() {
   if (document.body.classList.contains("home-page")) {
     initHomeNoteBinding();
     renderHomeMessages();
+    renderHomeLatestGallery();
     renderHomeShortVideoBoxes();
   }
 }
