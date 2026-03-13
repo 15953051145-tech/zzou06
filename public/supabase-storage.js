@@ -9,6 +9,7 @@
     "zl_projects_data_v1",
     "zl_messages_data_v1",
     "zl_shortvideo_accounts_v1",
+    "zl_iq_scores_v1",
   ];
 
   window.ZL_DATA_CACHE = {};

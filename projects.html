@@ -18,11 +18,61 @@
       <a class="is-active" href="./projects.html">项目</a>
       <a href="./personal.html">个人</a>
       <a href="./message.html">留言</a>
-    </nav>
+      </nav>
   </header>
 
   <main class="hero-screen content-screen">
     <section class="content-wrap">
+      <!-- 智商测试 -->
+      <div id="iqTestSection" class="iq-test-inline">
+        <div id="iqTestContent" class="iq-test-content">
+        <div id="iqStartLayout" class="iq-test-start-layout">
+          <div class="iq-test-cover">
+            <img src="/iq-test-cover.png" alt="智商测试" class="iq-test-cover-img">
+            <button id="iqCloseBtn" class="iq-close-btn" type="button" aria-label="关闭" title="关闭">×</button>
+          </div>
+          <div id="iqStartScreen" class="iq-screen iq-start-screen">
+            <h2 class="iq-inline-title">智商测试</h2>
+            <p class="iq-desc">共 15 道题，涵盖逻辑、数学、图形与语言推理。请认真作答，测试结果仅供参考。</p>
+            <button id="iqStartBtn" class="iq-btn iq-btn-primary" type="button">开始测试</button>
+          </div>
+        </div>
+        <div id="iqQuizScreen" class="iq-screen iq-quiz-screen" hidden>
+          <button id="iqQuizCloseBtn" class="iq-close-btn iq-close-btn-inline" type="button" aria-label="退出">×</button>
+          <div class="iq-progress-bar">
+            <div id="iqProgressFill" class="iq-progress-fill"></div>
+          </div>
+          <p class="iq-question-counter"><span id="iqCurrentNum">1</span> / 15</p>
+          <h2 id="iqQuestionText" class="iq-question-text"></h2>
+          <div id="iqOptionsList" class="iq-options-list"></div>
+          <div class="iq-nav-btns">
+            <button id="iqPrevBtn" class="iq-btn iq-btn-secondary" type="button">上一题</button>
+            <button id="iqNextBtn" class="iq-btn iq-btn-primary" type="button">下一题</button>
+          </div>
+        </div>
+        <div id="iqResultScreen" class="iq-screen iq-result-screen" hidden>
+          <button id="iqResultCloseBtn" class="iq-close-btn iq-close-btn-inline" type="button" aria-label="关闭">×</button>
+          <h2 class="iq-result-title">测试完成</h2>
+          <div class="iq-score-circle">
+            <span id="iqScoreValue" class="iq-score-value">0</span>
+            <span class="iq-score-label">IQ</span>
+          </div>
+          <p id="iqResultDesc" class="iq-result-desc"></p>
+          <p class="iq-result-hint">* 本测试仅供娱乐，不代表专业智商评估</p>
+          <div id="iqSubmitRank" class="iq-submit-rank">
+            <input id="iqNickname" class="iq-nickname-input" type="text" placeholder="输入昵称上榜" maxlength="20">
+            <button id="iqSubmitScoreBtn" class="iq-btn iq-btn-secondary" type="button">提交成绩</button>
+          </div>
+          <button id="iqLeaderboardBtn" class="iq-btn iq-btn-secondary" type="button">排行榜</button>
+          <div id="iqLeaderboardPanel" class="iq-leaderboard-panel" hidden>
+            <ol id="iqLeaderboardList" class="iq-leaderboard-list"></ol>
+            <button id="iqLeaderboardClose" class="iq-leaderboard-close" type="button">关闭</button>
+          </div>
+          <button id="iqRestartBtn" class="iq-btn iq-btn-primary" type="button">再测一次</button>
+        </div>
+        </div>
+      </div>
+      <h2 class="projects-section-title">项目</h2>
       <div id="projectsList" class="list-grid"></div>
       <div id="projectsListSentinel" class="load-more-sentinel" aria-hidden="true"></div>
     </section>
@@ -34,5 +84,6 @@
   <script src="./content-sync.js"></script>
   <script src="./nav-scroll.js"></script>
   <script src="./site-search.js?v=20260311c"></script>
+  <script src="./iq-test.js"></script>
 </body>
 </html>

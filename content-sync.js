@@ -235,93 +235,88 @@ function openNotePreview(note) {
 
 function renderGallery() {
   const host = document.getElementById("galleryGrid");
-  const loadMoreBtn = document.getElementById("loadMoreGalleryBtn");
-  const loadMoreWrap = document.getElementById("galleryLoadMoreWrap");
   if (!host) return;
 
   const items = normalizeGalleryAlbums(safeRead(STORAGE_KEYS.gallery))
     .slice()
     .reverse();
-  const pageSize = 4;
-  let visibleCount = Math.min(items.length, pageSize);
 
   if (!items.length) {
     host.innerHTML = "";
     host.appendChild(createEmptyState("暂无图片，请到个人页面上传。"));
-    if (loadMoreWrap) loadMoreWrap.style.display = "none";
     return;
   }
 
-  const renderSlice = () => {
-    host.innerHTML = "";
-    items.slice(0, visibleCount).forEach((item) => {
-      const card = document.createElement("article");
-      card.className = "gallery-item gallery-album-card";
+  host.innerHTML = "";
+  items.forEach((item) => {
+    const card = document.createElement("article");
+    card.className = "gallery-item gallery-album-card";
 
-      const title = document.createElement("h3");
-      title.className = "gallery-album-title";
-      title.textContent = item.title || "未命名相册";
-      card.appendChild(title);
+    const title = document.createElement("h3");
+    title.className = "gallery-album-title";
+    title.textContent = item.title || "未命名相册";
+    card.appendChild(title);
 
-      const meta = document.createElement("small");
-      meta.className = "gallery-album-meta";
-      meta.textContent = `${(item.images || []).length} 张照片`;
-      card.appendChild(meta);
+    const meta = document.createElement("small");
+    meta.className = "gallery-album-meta";
+    meta.textContent = `${(item.images || []).length} 张照片`;
+    card.appendChild(meta);
 
-      const photos = document.createElement("div");
-      photos.className = "gallery-album-photos";
-      (item.images || []).forEach((photo) => {
-        const img = document.createElement("img");
-        img.src = photo.src;
-        img.alt = photo.caption || item.title || "相册照片";
-        photos.appendChild(img);
-      });
-      card.appendChild(photos);
-
-      host.appendChild(card);
+    const photos = document.createElement("div");
+    photos.className = "gallery-album-photos";
+    (item.images || []).forEach((photo) => {
+      const img = document.createElement("img");
+      img.src = photo.src;
+      img.alt = photo.caption || item.title || "相册照片";
+      photos.appendChild(img);
     });
+    card.appendChild(photos);
 
-    const hasMore = visibleCount < items.length;
-    if (loadMoreWrap) loadMoreWrap.style.display = hasMore ? "flex" : "none";
-    if (loadMoreBtn) loadMoreBtn.disabled = !hasMore;
-  };
-
-  const loadMore = () => {
-    if (visibleCount >= items.length) return;
-    visibleCount = Math.min(visibleCount + pageSize, items.length);
-    renderSlice();
-  };
-
-  renderSlice();
-
-  if (loadMoreBtn) loadMoreBtn.onclick = loadMore;
-
-  if (loadMoreWrap && items.length > pageSize) {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0];
-        if (entry && entry.isIntersecting && visibleCount < items.length) {
-          loadMore();
-        }
-      },
-      { rootMargin: "200px", threshold: 0.1 }
-    );
-    observer.observe(loadMoreWrap);
-  }
+    host.appendChild(card);
+  });
 }
 
 function createProjectCard(item) {
   const card = document.createElement("article");
   card.className = "content-card";
+  const imgWrap = document.createElement("div");
+  imgWrap.className = "project-card-image";
+  imgWrap.setAttribute("aria-hidden", "true");
+  if (item.image) {
+    const img = document.createElement("img");
+    img.src = item.image;
+    img.alt = item.title || "";
+    img.style.width = "100%";
+    img.style.height = "100%";
+    img.style.objectFit = "cover";
+    imgWrap.appendChild(img);
+  } else {
+    imgWrap.textContent = "图片";
+  }
   const title = document.createElement("h3");
   title.textContent = item.title || "未命名项目";
   const text = document.createElement("p");
   text.textContent = item.description || "";
   const time = document.createElement("small");
   time.textContent = item.createdAt || "";
+  const btnWrap = document.createElement("div");
+  const btn = document.createElement(item.url ? "a" : "span");
+  btn.className = "project-card-btn";
+  btn.textContent = "查看详情";
+  if (item.url) {
+    btn.href = item.url;
+    btn.target = "_blank";
+    btn.rel = "noopener noreferrer";
+  } else {
+    btn.style.cursor = "default";
+    btn.style.opacity = "0.7";
+  }
+  btnWrap.appendChild(btn);
+  card.appendChild(imgWrap);
   card.appendChild(title);
   card.appendChild(text);
   card.appendChild(time);
+  card.appendChild(btnWrap);
   return card;
 }
 
@@ -645,9 +640,11 @@ function initPersonalManager() {
   }
 
   if (addProjectBtn && projectTitle && projectDesc) {
+    const projectUrl = document.getElementById("projectUrl");
     addProjectBtn.addEventListener("click", async () => {
       const title = projectTitle.value.trim();
       const description = projectDesc.value.trim();
+      const url = projectUrl ? projectUrl.value.trim() : "";
       if (!title || !description) {
         alert("请填写完整的项目标题和介绍");
         return;
@@ -658,11 +655,13 @@ function initPersonalManager() {
         id: makeId("project"),
         title,
         description,
+        url: url || undefined,
         createdAt: nowLabel(),
       });
       await safeWrite(STORAGE_KEYS.projects, list);
       projectTitle.value = "";
       projectDesc.value = "";
+      if (projectUrl) projectUrl.value = "";
       renderPersonalDataLists();
       alert("已发布到项目页面");
     });
@@ -925,10 +924,14 @@ function renderHomeLatestGallery() {
   const host = document.getElementById("homeLatestGallery");
   if (!host) return;
 
-  const albums = normalizeGalleryAlbums(safeRead(STORAGE_KEYS.gallery));
+  const allAlbums = normalizeGalleryAlbums(safeRead(STORAGE_KEYS.gallery))
+    .slice()
+    .reverse();
+  const PAGE_SIZE = 4;
+  const firstPageAlbums = allAlbums.slice(0, PAGE_SIZE);
   const photos = [];
 
-  albums.forEach((album, albumIdx) => {
+  firstPageAlbums.forEach((album, albumIdx) => {
     (album.images || []).forEach((photo, photoIdx) => {
       photos.push({
         src: photo.src || "",
@@ -940,48 +943,41 @@ function renderHomeLatestGallery() {
     });
   });
 
-  if (!photos.length) {
-    host.innerHTML = "";
-    host.appendChild(createEmptyState("暂无图库图片"));
-    return;
-  }
-
-  const toTime = (val) => {
-    const t = new Date(val).getTime();
-    return Number.isFinite(t) ? t : 0;
-  };
-
-  photos.sort((a, b) => {
-    const diff = toTime(b.createdAt) - toTime(a.createdAt);
-    if (diff !== 0) return diff;
-    return b.orderKey.localeCompare(a.orderKey);
-  });
-
   host.innerHTML = "";
-  photos.slice(0, 3).forEach((item) => {
+  const items = photos.slice(0, 4);
+  for (let i = 0; i < 4; i += 1) {
+    const item = items[i];
     const card = document.createElement("article");
     card.className = "home-latest-gallery-card";
 
-    const image = document.createElement("img");
-    image.src = item.src;
-    image.alt = item.caption || item.albumTitle || "图库最新图片";
-    image.loading = "lazy";
-    card.appendChild(image);
+    if (item) {
+      const image = document.createElement("img");
+      image.src = item.src;
+      image.alt = item.caption || item.albumTitle || "图库最新图片";
+      image.loading = "lazy";
+      card.appendChild(image);
 
-    const caption = document.createElement("div");
-    caption.className = "home-latest-gallery-caption";
-    caption.textContent = item.caption || item.albumTitle || "最新图片";
-    card.appendChild(caption);
+      const caption = document.createElement("div");
+      caption.className = "home-latest-gallery-caption";
+      caption.textContent = item.caption || item.albumTitle || "最新图片";
+      card.appendChild(caption);
+    } else {
+      const placeholder = document.createElement("div");
+      placeholder.className = "home-latest-gallery-placeholder";
+      placeholder.textContent = "暂无图片";
+      card.appendChild(placeholder);
+    }
 
     host.appendChild(card);
-  });
+  }
 }
 
 async function initContentSync() {
+  const page = document.body.getAttribute("data-page");
+  if (page === "gallery") renderGallery();
   if (window.ZLStorage && typeof window.ZLStorage.init === "function") {
     await window.ZLStorage.init();
   }
-  const page = document.body.getAttribute("data-page");
   if (page === "personal") initPersonalManager();
   if (page === "notes") renderNotes();
   if (page === "gallery") renderGallery();

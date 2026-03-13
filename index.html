@@ -6,7 +6,7 @@
   <base target="_self">
   <title>ZL灵光</title>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="./style.css?v=20260316">
 </head>
 <body class="home-page">
   <canvas id="bg-canvas" aria-hidden="true"></canvas>
@@ -38,15 +38,22 @@
       <h2>留言</h2>
       <div id="homeMessageList" class="message-panel-list"></div>
     </aside>
-    <article class="note-card">
-      <h2>随记</h2>
-      <textarea placeholder="在这里记录你的想法..."></textarea>
-    </article>
+    <div id="homeLatestGallery" class="home-latest-gallery-grid"></div>
   </section>
 
   <section class="home-page-extra" aria-label="更多内容">
-    <div id="homeLatestGallery" class="home-latest-gallery-grid"></div>
-    <div id="homeShortVideoBoxes" class="home-shortvideo-grid"></div>
+    <div class="home-extra-stack">
+      <article class="note-card">
+        <h2>随记</h2>
+        <textarea placeholder="在这里记录你的想法..."></textarea>
+      </article>
+      <div class="audio-viz-wrap">
+        <h2 class="audio-viz-title">音乐</h2>
+        <canvas id="audioVizCanvas" width="900" height="180" aria-label="音乐频谱可视化"></canvas>
+        <button id="audioToggleBtn" class="audio-toggle-btn" type="button">播放音乐</button>
+        <audio id="bgAudio" src="/music/liv1_- - 最后一页（张昊晴）.mp3" preload="auto" loop></audio>
+      </div>
+    </div>
   </section>
 
   <section class="home-page-new" aria-label="新内容">
@@ -56,6 +63,7 @@
     </div>
     <footer class="home-page-footer">
       <p class="home-page-footer-text">© ZL灵光 · 让心灵照亮前行的路</p>
+      <div id="homeShortVideoBoxes" class="home-shortvideo-grid"></div>
       <div class="home-page-contact-card">
         <a class="contact-item" href="weixin://dl/chat?shun15953951145" title="微信">
           <span class="contact-icon contact-icon-wechat" aria-hidden="true">
@@ -80,12 +88,19 @@
     </footer>
   </section>
 
+  <div class="music-icon-wrap">
+    <button id="musicIconBtn" class="music-icon-btn" type="button" aria-label="音乐开关" title="点击播放/暂停音乐">
+      <img class="music-icon-note" src="./assets/music-note-icon.png" alt="" width="96" height="96">
+    </button>
+  </div>
+
   <script type="module" src="./script.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="./supabase-config.js"></script>
   <script src="./supabase-storage.js"></script>
   <script src="./auth-gate.js"></script>
   <script src="./content-sync.js"></script>
+  <script src="./audio-visualizer.js"></script>
   <script src="./nav-scroll.js"></script>
   <script src="./site-search.js?v=20260311c"></script>
 </body>

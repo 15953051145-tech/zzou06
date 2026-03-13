@@ -61,3 +61,4 @@ window.SUPABASE_ANON_KEY = "你的 anon key";
 | zl_projects_data_v1 | 项目 |
 | zl_messages_data_v1 | 留言 |
 | zl_shortvideo_accounts_v1 | 短视频账号 |
+| zl_iq_scores_v1 | 智商测试排行榜 |

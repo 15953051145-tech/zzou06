@@ -1,7 +1,9 @@
 import * as THREE from "https://unpkg.com/three@0.161.0/build/three.module.js";
 
 const canvas = document.getElementById("bg-canvas");
-
+if (!canvas) {
+  console.warn("bg-canvas not found, skipping particle effect");
+} else {
 const renderer = new THREE.WebGLRenderer({
   canvas,
   antialias: true,
@@ -189,3 +191,4 @@ window.addEventListener("resize", () => {
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.7));
 });
+}
